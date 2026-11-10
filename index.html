@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LenteraBahasa SMP - Portal Kisi-Kisi, Soal HOTS & Pembahasan</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        /* Proteksi Anti-Salin pada Area Materi Terkunci */
+        .drm-protected {
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+        /* Menyembunyikan halaman saat dipaksa cetak (Ctrl+P) */
+        @media print {
+            body { display: none !important; }
+        }
+        /* Pola Watermark Berulang */
+        .watermark-grid {
+            background-image: repeating-linear-gradient(
+                -25deg,
+                transparent,
+                transparent 90px,
+                rgba(79, 70, 229, 0.04) 90px,
+                rgba(79, 70, 229, 0.04) 92px
+            );
+        }
+        /* Efek Buram Anti-Screenshot */
+        .blur-protection {
+            filter: blur(16px);
+            pointer-events: none;
+            transition: filter 0.25s ease;
+        }
+        /* Animasi Halus */
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+    <!-- NOTIFIKASI TOAST (PENGGANTI ALERT) -->
+    <div id="toastBox" class="fixed top-5 right-5 z-50 hidden max-w-sm bg-slate-900 text-white px-4 py-3.5 rounded-2xl shadow-2xl border border-slate-700 flex items-center gap-3 transition-all">
+        <i id="toastIcon" class="fa-solid fa-circle-info text-amber-400 text-lg"></i>
+        <p id="toastMessage" class="text-xs font-medium leading-relaxed"></p>
+    </div>
+
+    <!-- NAVBAR UTAMA -->
+    <header class="sticky top-0 z-30 bg-white/95 backdrop-blur border-b border-slate-200 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 py-3.5 flex flex-wrap justify-between items-center gap-3">
+            <!-- Brand Logo -->
+            <div onclick="switchMainView('store')" class="flex items-center gap-3 cursor-pointer">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center text-white shadow-md">
+                    <i class="fa-solid fa-book-open-reader text-lg"></i>
+                </div>
+                <div>
+                    <span class="font-extrabold text-lg tracking-tight text-slate-900">Lentera<span class="text-indigo-600">Bahasa</span></span>
+                    <span class="block text-[11px] text-slate-500 font-medium -mt-1">Pusat Soal & Kisi-Kisi Bahasa Indonesia SMP</span>
+                </div>
+            </div>
+
+            <!-- Menu Navigasi Atas -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                <button onclick="switchMainView('store')" id="navBtnStore" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-indigo-50 text-indigo-700 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-store"></i> Katalog Paket
+                </button>
+                <button onclick="openSampleModal(0)" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-eye text-amber-600"></i> Coba Contoh Soal
+                </button>
+                <button onclick="switchMainView('admin')" id="navBtnAdmin" class="px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 border border-slate-200 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-user-gear"></i> Area Admin
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ========================================================= -->
+    <!-- TAMPILAN 1: HALAMAN TOKO & KATALOG SOAL (USER VIEW)       -->
+    <!-- ========================================================= -->
+    <main id="viewStore" class="flex-1">
+        
+        <!-- HERO BANNER PERSUASIF -->
+        <section class="relative overflow-hidden bg-gradient-to-br from-indigo-950 via-indigo-900 to-violet-900 text-white py-12 px-4">
+            <div class="max-w-6xl mx-auto grid md:grid-cols-12 gap-8 items-center relative z-10">
+                <div class="md:col-span-7 space-y-5">
+                    <div class="inline-flex items-center gap-2 bg-indigo-500/20 border border-indigo-400/30 px-3.5 py-1.5 rounded-full text-xs font-semibold text-indigo-200">
+                        <i class="fa-solid fa-shield-halved text-amber-400"></i>
+                        <span>Kurikulum Merdeka & Standar Literasi HOTS SMP</span>
+                    </div>
+                    <h1 class="text-2xl sm:text-4xl font-extrabold leading-tight tracking-tight">
+                        Siap Hadapi Ujian Bahasa Indonesia SMP dengan <span class="text-amber-400 underline decoration-amber-400/40">Kisi-Kisi & Pembahasan Lengkap!</span>
+                    </h1>
+                    <p class="text-slate-200 text-sm sm:text-base leading-relaxed">
+                        Disusun terstruktur dengan analisis tingkat berpikir kritis. Anda dapat <strong>melihat dan mencoba contoh kisi-kisi, soal, serta pembahasan secara gratis</strong> sebelum memutuskan membeli paket lengkapnya.
+                    </p>
+                    <div class="flex flex-wrap items-center gap-3 pt-1">
+                        <button onclick="openSampleModal(0)" class="bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold px-5 py-3 rounded-xl text-xs sm:text-sm shadow-lg transition flex items-center gap-2">
+                            <i class="fa-solid fa-play"></i> Coba Buka Contoh Gratis Sekarang
+                        </button>
+                        <a href="#katalogSection" class="bg-white/10 hover:bg-white/20 text-white border border-white/20 font-semibold px-5 py-3 rounded-xl text-xs sm:text-sm transition">
+                            Lihat Semua Paket
+                        </a>
+                    </div>
+                    <!-- Keunggulan Singkat -->
+                    <div class="grid grid-cols-3 gap-3 pt-4 border-t border-indigo-800/80 text-xs text-indigo-200">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-check-circle text-emerald-400"></i>
+                            <span>Kisi-Kisi Terukur</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-check-circle text-emerald-400"></i>
+                            <span>Pembahasan Detail</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-lock text-amber-400"></i>
+                            <span>Proteksi Anti-Gandakan</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kartu Cuplikan Kualitas Soal di Hero -->
+                <div class="md:col-span-5">
+                    <div class="bg-white text-slate-800 rounded-2xl p-5 shadow-2xl border border-indigo-100 space-y-4">
+                        <div class="flex justify-between items-center border-b pb-3">
+                            <div>
+                                <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-600">Intip Kualitas Materi Kami</span>
+                                <h3 class="font-bold text-sm text-slate-900">Cuplikan Paket Kelas IX SMP</h3>
+                            </div>
+                            <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-1 rounded-full">Bisa Dicoba Dulu!</span>
+                        </div>
+                        <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 text-xs space-y-2">
+                            <p class="font-semibold text-indigo-900"><i class="fa-solid fa-list-check mr-1"></i> Contoh Indikator Kisi-Kisi:</p>
+                            <p class="text-slate-600">Mengevaluasi kekuatan argumen pro dan kontra pada Teks Diskusi bertema kebijakan lingkungan sekolah.</p>
+                        </div>
+                        <div class="bg-indigo-50/60 p-3.5 rounded-xl border border-indigo-100 text-xs space-y-2">
+                            <p class="font-semibold text-indigo-900"><i class="fa-solid fa-lightbulb text-amber-500 mr-1"></i> Mengapa Banyak Guru & Siswa Suka?</p>
+                            <p class="text-slate-600">Setiap soal dilengkapi kunci jawaban dan alasan mengapa opsi pengecoh salah, sehingga sangat mudah dipahami.</p>
+                        </div>
+                        <button onclick="openSampleModal(0)" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs transition shadow">
+                            <i class="fa-regular fa-folder-open mr-1"></i> Buka Simulasi Contoh Kisi-Kisi, Soal & Pembahasan
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FILTER JENJANG KELAS & KATALOG PAKET -->
+        <section id="katalogSection" class="max-w-6xl mx-auto px-4 py-10 space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+                <div>
+                    <h2 class="text-xl font-extrabold text-slate-900">Pilih Paket Kisi-Kisi, Soal & Pembahasan SMP</h2>
+                    <p class="text-xs text-slate-500 mt-0.5">Klik <strong>"Coba Contoh Gratis"</strong> pada paket mana saja untuk menguji kualitas soal sebelum membayar.</p>
+                </div>
+                <!-- Filter Kelas -->
+                <div class="flex flex-wrap gap-1.5 bg-slate-200/70 p-1 rounded-xl text-xs font-bold">
+                    <button onclick="filterPackages('ALL')" id="filter-ALL" class="px-3 py-1.5 rounded-lg bg-white text-indigo-700 shadow-sm transition">Semua Kelas</button>
+                    <button onclick="filterPackages('Kelas VII')" id="filter-Kelas VII" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition">Kelas VII</button>
+                    <button onclick="filterPackages('Kelas VIII')" id="filter-Kelas VIII" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition">Kelas VIII</button>
+                    <button onclick="filterPackages('Kelas IX')" id="filter-Kelas IX" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition">Kelas IX</button>
+                </div>
+            </div>
+
+            <!-- Grid Kartu Paket Soal -->
+            <div id="packagesGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Dirender secara dinamis oleh JavaScript -->
+            </div>
+        </section>
+
+        <!-- INFORMASI KEAMANAN LISENSI TUNGGAL -->
+        <section class="max-w-6xl mx-auto px-4 pb-12">
+            <div class="bg-gradient-to-r from-slate-900 to-indigo-950 text-white rounded-2xl p-6 sm:p-8 shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="space-y-2 max-w-2xl">
+                    <div class="inline-flex items-center gap-2 text-amber-400 text-xs font-bold uppercase tracking-wider">
+                        <i class="fa-solid fa-fingerprint"></i> Sistem Keamanan Lisensi Perangkat
+                    </div>
+                    <h3 class="text-lg sm:text-xl font-bold">Mengapa Dokumen Dibuka Melalui Pembaca Khusus Web?</h3>
+                    <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                        Untuk menjaga keaslian karya guru penyusun, setiap paket yang dibeli otomatis terkunci pada <strong>ID Perangkat Anda (<span id="bannerDeviceId" class="font-mono text-amber-300"></span>)</strong>. Materi dapat dibaca sepuasnya di perangkat ini namun tidak dapat digandakan, dicetak, atau disebarkan ke perangkat lain.
+                    </p>
+                </div>
+                <div class="shrink-0">
+                    <button onclick="openSampleModal(0)" class="bg-white text-slate-900 hover:bg-indigo-50 font-bold px-5 py-3 rounded-xl text-xs shadow transition">
+                        Uji Coba Contoh Materi Dulu &rarr;
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ========================================================= -->
+    <!-- TAMPILAN 2: PEMBACA DOKUMEN AMAN (DRM SECURE READER)      -->
+    <!-- ========================================================= -->
+    <section id="viewReader" class="hidden flex-1 max-w-5xl w-full mx-auto px-4 py-6 drm-protected">
+        <div class="bg-white shadow-2xl rounded-2xl overflow-hidden border border-slate-200">
+            
+            <!-- Header Pembaca Dokumen -->
+            <div class="bg-slate-900 text-white p-4 sm:p-5 flex flex-wrap justify-between items-center gap-3">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span id="readerGradeBadge" class="text-[11px] bg-indigo-600 px-2 py-0.5 rounded font-bold">Kelas IX</span>
+                        <h2 id="readerTitle" class="font-bold text-sm sm:text-base">Judul Paket Materi</h2>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-1">
+                        Perangkat Terkunci: <span id="readerDeviceId" class="font-mono text-amber-400 font-semibold"></span> 
+                        &bull; Pembeli: <span id="readerBuyerEmail" class="text-emerald-300 font-medium"></span>
+                    </p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="simulateDifferentDevice()" class="text-xs bg-rose-600 hover:bg-rose-500 px-3 py-1.5 rounded-xl text-white font-semibold transition">
+                        <i class="fa-solid fa-mobile-screen mr-1"></i> Uji Buka di HP Lain
+                    </button>
+                    <button onclick="switchMainView('store')" class="text-xs bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded-xl text-slate-200 font-semibold transition">
+                        &larr; Kembali ke Katalog
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tab Materi Lengkap -->
+            <div class="flex flex-wrap border-b border-slate-200 bg-slate-100 text-xs sm:text-sm font-bold">
+                <button onclick="switchReaderTab('kisi')" id="rTab-kisi" class="px-5 py-3.5 border-b-2 border-indigo-600 text-indigo-700 bg-white transition flex items-center gap-2">
+                    <i class="fa-solid fa-table-list"></i> 1. Kisi-Kisi Lengkap
+                </button>
+                <button onclick="switchReaderTab('soal')" id="rTab-soal" class="px-5 py-3.5 border-b-2 border-transparent text-slate-600 hover:text-slate-900 transition flex items-center gap-2">
+                    <i class="fa-solid fa-file-circle-question"></i> 2. Butir Soal Latihan
+                </button>
+                <button onclick="switchReaderTab('bahas')" id="rTab-bahas" class="px-5 py-3.5 border-b-2 border-transparent text-slate-600 hover:text-slate-900 transition flex items-center gap-2">
+                    <i class="fa-solid fa-key"></i> 3. Panduan & Pembahasan
+                </button>
+            </div>
+
+            <!-- Peringatan Anti-Screenshot -->
+            <div id="blurWarning" class="hidden bg-amber-50 border-b border-amber-200 px-4 py-2.5 text-xs text-amber-900 flex justify-between items-center">
+                <span><i class="fa-solid fa-eye-slash mr-1"></i> Tampilan disamarkan otomatis saat kursor keluar jendela untuk mencegah tangkapan layar. Klik tombol di samping untuk lanjut membaca.</span>
+                <button onclick="unblurDocument()" class="bg-amber-600 text-white px-3 py-1 rounded-lg font-bold">Buka Kembali</button>
+            </div>
+
+            <!-- Kontainer Isi Dokumen Terkunci -->
+            <div id="documentContainer" onclick="unblurDocument()" class="relative p-6 sm:p-8 min-h-[450px] max-h-[70vh] overflow-y-auto watermark-grid">
+                
+                <!-- Watermark Dinamis Melintang -->
+                <div class="pointer-events-none absolute inset-0 flex flex-col items-center justify-around z-20 opacity-10 select-none overflow-hidden">
+                    <p id="wmText1" class="text-xl sm:text-3xl font-extrabold text-slate-900 -rotate-12 tracking-widest whitespace-nowrap"></p>
+                    <p id="wmText2" class="text-xl sm:text-3xl font-extrabold text-slate-900 -rotate-12 tracking-widest whitespace-nowrap"></p>
+                    <p id="wmText3" class="text-xl sm:text-3xl font-extrabold text-slate-900 -rotate-12 tracking-widest whitespace-nowrap"></p>
+                </div>
+
+                <!-- Konten Kisi-Kisi -->
+                <div id="rContent-kisi" class="relative z-10 space-y-4"></div>
+                <!-- Konten Soal -->
+                <div id="rContent-soal" class="hidden relative z-10 space-y-4"></div>
+                <!-- Konten Pembahasan -->
+                <div id="rContent-bahas" class="hidden relative z-10 space-y-4"></div>
+            </div>
+
+            <!-- Footer Proteksi -->
+            <div class="bg-slate-100 px-6 py-3 border-t border-slate-200 text-xs text-slate-500 flex flex-wrap justify-between items-center gap-2">
+                <span><i class="fa-solid fa-lock text-indigo-600 mr-1"></i> Proteksi Aktif: Anti-Salin, Anti-Klik Kanan, Anti-Cetak, & Terkunci di Media Pengunduh</span>
+                <span class="text-rose-600 font-bold">Dilarang Menggandakan Dokumen</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- TAMPILAN 3: AREA ADMIN (UNGGAH PAKET & ATUR REKENING)     -->
+    <!-- ========================================================= -->
+    <section id="viewAdmin" class="hidden flex-1 max-w-6xl w-full mx-auto px-4 py-8 space-y-8 fade-in">
+        
+        <!-- Header Admin -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-wrap justify-between items-center gap-4">
+            <div>
+                <span class="text-xs font-bold uppercase tracking-wider text-indigo-600">Panel Pengelola Web</span>
+                <h2 class="text-xl font-extrabold text-slate-900">Area Admin Guru: Kelola Rekening & Unggah Paket Soal</h2>
+                <p class="text-xs text-slate-500">Semua perubahan rekening bank dan paket soal baru yang Anda simpan akan langsung tampil di halaman katalog pembeli.</p>
+            </div>
+            <button onclick="switchMainView('store')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold px-4 py-2.5 rounded-xl text-xs transition">
+                <i class="fa-solid fa-eye mr-1"></i> Lihat Tampilan Toko Pembeli
+            </button>
+        </div>
+
+        <div class="grid lg:grid-cols-12 gap-8">
+            
+            <!-- KOLOM KIRI: PENGATURAN REKENING TRANSFER & KODE AKSES -->
+            <div class="lg:col-span-5 space-y-6">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                    <div class="flex items-center gap-2.5 border-b pb-3">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                            <i class="fa-solid fa-building-columns"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-sm text-slate-900">Pengaturan Rekening Tempat Transfer</h3>
+                            <p class="text-[11px] text-slate-500">Rekening ini ditampilkan saat pembeli hendak membayar.</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3 text-xs">
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">Nama Bank / E-Wallet</label>
+                            <input type="text" id="adminBankName" class="w-full border border-slate-300 rounded-xl px-3.5 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Contoh: Bank BRI / BCA / Mandiri">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">Nomor Rekening</label>
+                            <input type="text" id="adminBankNumber" class="w-full border border-slate-300 rounded-xl px-3.5 py-2 font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Contoh: 0123-4567-8901-234">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">Atas Nama Pemilik Rekening</label>
+                            <input type="text" id="adminBankHolder" class="w-full border border-slate-300 rounded-xl px-3.5 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Contoh: Ibu Romiyatun, S.Pd.">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">Nomor WhatsApp Konfirmasi Bukti Transfer</label>
+                            <input type="text" id="adminWaNumber" class="w-full border border-slate-300 rounded-xl px-3.5 py-2 font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Contoh: 081234567890">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">Kode Lisensi Aktivasi Pembeli</label>
+                            <input type="text" id="adminLicenseCode" class="w-full border border-slate-300 rounded-xl px-3.5 py-2 font-mono uppercase bg-amber-50/50 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Contoh: LUNAS2026">
+                            <span class="text-[11px] text-slate-400 block mt-1">Berikan kode ini kepada pembeli setelah mereka mengirimkan bukti transfer.</span>
+                        </div>
+                        <button onclick="saveBankSettings()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl transition shadow">
+                            <i class="fa-solid fa-floppy-disk mr-1"></i> Simpan Pengaturan Rekening
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Daftar Paket Saat Ini (Untuk Hapus/Kelola) -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                    <h3 class="font-bold text-sm text-slate-900 border-b pb-2">Daftar Paket Aktif di Katalog</h3>
+                    <div id="adminPackageList" class="space-y-2.5 max-h-64 overflow-y-auto pr-1"></div>
+                </div>
+            </div>
+
+            <!-- KOLOM KANAN: FORM UNGGAH PAKET KISI-KISI, SOAL & PEMBAHASAN BARU -->
+            <div class="lg:col-span-7">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                    <div class="flex items-center justify-between border-b pb-3">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center">
+                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-sm text-slate-900">Unggah Paket Kisi-Kisi, Soal & Pembahasan Baru</h3>
+                                <p class="text-[11px] text-slate-500">Dilengkapi pengisian contoh materi gratis untuk menarik minat pembeli.</p>
+                            </div>
+                        </div>
+                        <button onclick="fillSampleUploadForm()" class="text-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold px-3 py-1.5 rounded-lg transition">
+                            Isi Contoh Otomatis
+                        </button>
+                    </div>
+
+                    <div class="grid sm:grid-cols-3 gap-3 text-xs">
+                        <div class="sm:col-span-2">
+                            <label class="block font-bold text-slate-700 mb-1">Judul Paket Soal</label>
+                            <input type="text" id="newPkgTitle" class="w-full border border-slate-300 rounded-xl px-3 py-2" placeholder="Contoh: Paket Sukses Ujian Sekolah Teks Eksposisi & Pidato">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">Jenjang Kelas</label>
+                            <select id="newPkgGrade" class="w-full border border-slate-300 rounded-xl px-3 py-2 bg-white">
+                                <option value="Kelas VII">Kelas VII SMP</option>
+                                <option value="Kelas VIII">Kelas VIII SMP</option>
+                                <option value="Kelas IX" selected>Kelas IX SMP</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid sm:grid-cols-2 gap-3 text-xs">
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">Harga Paket (Rp)</label>
+                            <input type="number" id="newPkgPrice" class="w-full border border-slate-300 rounded-xl px-3 py-2" placeholder="Contoh: 45000">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">Unggah File Dokumen (Opsional .txt/.html)</label>
+                            <input type="file" id="newPkgFile" onchange="handleAdminFileUpload(event)" class="w-full text-[11px] text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                        </div>
+                    </div>
+
+                    <div class="text-xs">
+                        <label class="block font-bold text-slate-700 mb-1">Deskripsi Singkat Paket</label>
+                        <input type="text" id="newPkgDesc" class="w-full border border-slate-300 rounded-xl px-3 py-2" placeholder="Contoh: Berisi 40 soal HOTS lengkap dengan kisi-kisi capaian pembelajaran dan pembahasan.">
+                    </div>
+
+                    <!-- Bagian Contoh Gratis (Preview Sebelum Membeli) -->
+                    <div class="bg-amber-50/70 p-4 rounded-xl border border-amber-200 space-y-3 text-xs">
+                        <div class="font-bold text-amber-900 flex items-center gap-1.5">
+                            <i class="fa-solid fa-star text-amber-500"></i>
+                            <span>Materi Contoh Gratis (Dapat Dilihat Calon Pembeli Sebelum Membayar)</span>
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-slate-700 mb-1">Contoh Kisi-Kisi (Preview Gratis)</label>
+                            <textarea id="newPkgSampleKisi" rows="2" class="w-full border border-slate-300 rounded-lg p-2" placeholder="Tuliskan 1-2 indikator kisi-kisi contoh..."></textarea>
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-slate-700 mb-1">Contoh 1 Butir Soal Pilihan Ganda (Preview Gratis)</label>
+                            <textarea id="newPkgSampleSoal" rows="2" class="w-full border border-slate-300 rounded-lg p-2" placeholder="Tuliskan kutipan wacana dan pertanyaan contoh..."></textarea>
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-slate-700 mb-1">Contoh Pembahasan Lengkap (Preview Gratis)</label>
+                            <textarea id="newPkgSampleBahas" rows="2" class="w-full border border-slate-300 rounded-lg p-2" placeholder="Tuliskan kunci jawaban dan analisis pembahasannya..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Bagian Materi Penuh (Terkunci DRM Sebelum Bayar) -->
+                    <div class="bg-indigo-50/50 p-4 rounded-xl border border-indigo-200 space-y-3 text-xs">
+                        <div class="font-bold text-indigo-950 flex items-center gap-1.5">
+                            <i class="fa-solid fa-lock text-indigo-600"></i>
+                            <span>Materi Utuh Eksklusif (Hanya Terbuka Setelah Pembeli Membayar)</span>
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-slate-700 mb-1">Isi Kisi-Kisi Lengkap</label>
+                            <textarea id="newPkgFullKisi" rows="2" class="w-full border border-slate-300 rounded-lg p-2" placeholder="Masukkan seluruh tabel/daftar kisi-kisi lengkap..."></textarea>
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-slate-700 mb-1">Isi Seluruh Butir Soal</label>
+                            <textarea id="newPkgFullSoal" rows="3" class="w-full border border-slate-300 rounded-lg p-2" placeholder="Masukkan seluruh butir soal latihan..."></textarea>
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-slate-700 mb-1">Isi Panduan Penskoran & Pembahasan Lengkap</label>
+                            <textarea id="newPkgFullBahas" rows="2" class="w-full border border-slate-300 rounded-lg p-2" placeholder="Masukkan kunci jawaban dan pembahasan lengkap..."></textarea>
+                        </div>
+                    </div>
+
+                    <button onclick="addNewPackage()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl text-xs sm:text-sm transition shadow-md">
+                        <i class="fa-solid fa-plus-circle mr-1"></i> Terbitkan Paket ke Katalog Web
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- MODAL 1: COBA CONTOH KISI-KISI, SOAL & PEMBAHASAN GRATIS  -->
+    <!-- ========================================================= -->
+    <div id="sampleModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-40 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-3xl w-full shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh] fade-in">
+            
+            <!-- Header Modal Contoh -->
+            <div class="bg-gradient-to-r from-amber-500 to-orange-500 text-white p-4 sm:px-6 flex justify-between items-center">
+                <div>
+                    <span class="text-[11px] font-extrabold uppercase tracking-wider bg-black/20 px-2.5 py-0.5 rounded-full">Uji Kualitas Materi Sebelum Membeli</span>
+                    <h3 id="sampleModalTitle" class="font-extrabold text-base sm:text-lg mt-1">Contoh Gratis</h3>
+                </div>
+                <button onclick="closeSampleModal()" class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-white font-bold">&times;</button>
+            </div>
+
+            <!-- Pilihan Paket di dalam Modal Contoh -->
+            <div class="bg-amber-50 px-6 py-2.5 border-b border-amber-200 flex flex-wrap items-center justify-between gap-2 text-xs">
+                <span class="font-semibold text-amber-900">Pilih Paket yang Ingin Dicoba Contohnya:</span>
+                <select id="samplePackageSelector" onchange="openSampleModal(this.value)" class="border border-amber-300 rounded-lg px-2.5 py-1 bg-white font-bold text-slate-800"></select>
+            </div>
+
+            <!-- Navigasi 3 Tab Contoh (Kisi-kisi, Soal Interaktif, Pembahasan) -->
+            <div class="flex border-b border-slate-200 bg-slate-100 text-xs sm:text-sm font-bold">
+                <button onclick="switchSampleTab('kisi')" id="sTab-kisi" class="flex-1 py-3 border-b-2 border-amber-600 text-amber-700 bg-white">
+                    1. Contoh Kisi-Kisi
+                </button>
+                <button onclick="switchSampleTab('soal')" id="sTab-soal" class="flex-1 py-3 border-b-2 border-transparent text-slate-600 hover:text-slate-900">
+                    2. Coba Contoh Soal
+                </button>
+                <button onclick="switchSampleTab('bahas')" id="sTab-bahas" class="flex-1 py-3 border-b-2 border-transparent text-slate-600 hover:text-slate-900">
+                    3. Contoh Pembahasan
+                </button>
+            </div>
+
+            <!-- Isi Modal Contoh -->
+            <div class="p-6 overflow-y-auto space-y-4 flex-1 text-sm">
+                <!-- Tab Contoh Kisi-Kisi -->
+                <div id="sContent-kisi" class="space-y-3"></div>
+                <!-- Tab Contoh Soal Interaktif -->
+                <div id="sContent-soal" class="hidden space-y-4"></div>
+                <!-- Tab Contoh Pembahasan -->
+                <div id="sContent-bahas" class="hidden space-y-3"></div>
+            </div>
+
+            <!-- Footer Ajakan Beli Paket Lengkap -->
+            <div class="bg-slate-50 p-4 sm:px-6 border-t border-slate-200 flex flex-wrap justify-between items-center gap-3">
+                <div class="text-xs text-slate-600">
+                    <span class="font-bold text-slate-900 block">Cocok dengan kualitas kisi-kisi & pembahasan di atas?</span>
+                    Dapatkan paket lengkap seluruh soal dengan akses instan di perangkat Anda.
+                </div>
+                <button id="sampleBuyBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold px-5 py-2.5 rounded-xl text-xs shadow-md transition">
+                    Beli & Buka Paket Lengkap Sekarang &rarr;
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- MODAL 2: PEMBAYARAN TRANSFER REKENING & AKTIVASI PERANGKAT-->
+    <!-- ========================================================= -->
+    <div id="paymentModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-40 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden fade-in">
+            
+            <div class="bg-indigo-900 text-white p-5 flex justify-between items-center">
+                <div>
+                    <span class="text-[10px] font-bold uppercase tracking-wider bg-indigo-700 px-2.5 py-0.5 rounded-full text-indigo-200">Aktivasi Lisensi Perangkat</span>
+                    <h3 id="payModalPkgTitle" class="font-bold text-base mt-1">Pembayaran Paket</h3>
+                </div>
+                <button onclick="closePaymentModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white font-bold">&times;</button>
+            </div>
+
+            <div class="p-6 space-y-4 text-xs">
+                <!-- Info Harga & Nomor Rekening Admin -->
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2.5">
+                    <div class="flex justify-between items-center border-b border-slate-200 pb-2">
+                        <span class="text-slate-500">Total Transfer:</span>
+                        <span id="payModalPrice" class="text-base font-extrabold text-indigo-700">Rp 45.000</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-500 block mb-1">Silakan Transfer ke Rekening Resmi Berikut:</span>
+                        <div class="bg-white p-3 rounded-lg border border-indigo-200 flex justify-between items-center">
+                            <div>
+                                <p id="payBankName" class="font-bold text-slate-800 text-xs">Bank BRI</p>
+                                <p id="payBankNumber" class="font-mono font-extrabold text-sm text-indigo-700 my-0.5">0123-4567-8901-234</p>
+                                <p id="payBankHolder" class="text-[11px] text-slate-500">a.n. Ibu Romiyatun, S.Pd.</p>
+                            </div>
+                            <button onclick="copyBankNumber()" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold px-3 py-1.5 rounded-lg text-[11px] transition">
+                                <i class="fa-regular fa-copy mr-1"></i> Salin Rek
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center pt-1 text-[11px]">
+                        <span class="text-slate-500">Konfirmasi WA Admin: <strong id="payWaNumber" class="text-slate-700">0812-3456-7890</strong></span>
+                        <span class="font-mono bg-amber-100 text-amber-900 px-2 py-0.5 rounded font-semibold">ID: <span id="payDeviceId"></span></span>
+                    </div>
+                </div>
+
+                <!-- Input Email & Kode Lisensi -->
+                <div class="space-y-3">
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Nama / Email Pembeli (Untuk Watermark Dokumen)</label>
+                        <input type="email" id="buyerEmailInput" value="siswa.prestasi@smp.sch.id" class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="block font-bold text-slate-700">Kode Aktivasi (Setelah Transfer)</label>
+                            <button onclick="fillDemoCodeInModal()" class="text-[11px] text-indigo-600 hover:underline font-bold">Simulasi Sudah Transfer (Isi Kode)</button>
+                        </div>
+                        <input type="text" id="buyerCodeInput" placeholder="Masukkan kode dari Admin" class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-xs font-mono uppercase focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <button onclick="verifyAndUnlockPackage()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold py-3 rounded-xl text-xs shadow-lg transition">
+                        <i class="fa-solid fa-unlock-keyhole mr-1"></i> Verifikasi Pembayaran & Buka Materi di Perangkat Ini
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-slate-200 py-6 px-4 text-center text-xs text-slate-500 mt-auto">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
+            <p class="font-semibold text-slate-700">LenteraBahasa SMP &mdash; Platform Materi & Soal Bahasa Indonesia Terproteksi DRM</p>
+            <p>Dilengkapi Fitur Coba Contoh Gratis &bull; Lisensi Perangkat Tunggal</p>
+        </div>
+    </footer>
+
+    <!-- ========================================================= -->
+    <!-- SKRIP UTAMA APLIKASI                                      -->
+    <!-- ========================================================= -->
+    <script>
+        // 1. INISIALISASI ID PERANGKAT UNIK (DEVICE BINDING)
+        function getOrCreateDeviceId() {
+            let devId = localStorage.getItem('lb_device_id');
+            if (!devId) {
+                devId = 'SMP-' + Math.random().toString(36).substring(2, 7).toUpperCase();
+                localStorage.setItem('lb_device_id', devId);
+            }
+            return devId;
+        }
+        const currentDeviceId = getOrCreateDeviceId();
+        document.getElementById('bannerDeviceId').innerText = currentDeviceId;
+        document.getElementById('payDeviceId').innerText = currentDeviceId;
+
+        // 2. DATA AWAL REKENING ADMIN & PAKET SOAL SMP
+        const defaultBankSettings = {
+            bankName: 'Bank BRI (Transfer & QRIS)',
+            bankNumber: '0341-01-004589-53-2',
+            bankHolder: 'Bunda Romiyatun, S.Pd.',
+            waNumber: '0812-8899-7766',
+            licenseCode: 'LUNAS2026'
+        };
+
+        const defaultPackages = [
+            {
+                id: 'pkg-ix-1',
+                title: 'Paket Sukses Ujian Sekolah & Literasi Kelas IX',
+                grade: 'Kelas IX',
+                price: 45000,
+                questionCount: '40 Butir Soal HOTS',
+                desc: 'Mencakup Teks Diskusi, Artikel Ilmiah Populer, Teks Tanggapan, dan Cerita Inspiratif lengkap dengan analisis Taksonomi SOLO.',
+                sampleKisi: `<strong>Elemen Membaca & Memirsa (Kelas IX):</strong><br>• <strong>Materi:</strong> Teks Diskusi Isu Lingkungan Sekolah.<br>• <strong>Indikator Soal:</strong> Disajikan kutipan teks diskusi dengan dua sudut pandang berbeda, peserta didik mampu merumuskan solusi sintesis yang menjembatani argumen pro dan kontra secara logis (Level Kognitif L3 - Mengevaluasi).`,
+                sampleSoal: {
+                    stimulus: `"Kebijakan pembatasan kemasan plastik sekali pakai di kantin SMP Merdeka menuai beragam tanggapan. Sebagian siswa mendukung karena langkah ini menekan limbah harian hingga 60%, sedangkan pedagang kantin mengkhawatirkan antrean pencucian piring saat jam istirahat yang singkat."`,
+                    question: `Berdasarkan kutipan teks diskusi tersebut, manakah solusi sintesis yang paling tepat untuk menjembatani kedua argumen?`,
+                    options: [
+                        `A. Menghentikan operasional kantin selama masa transisi berlangsung.`,
+                        `B. Menerapkan sistem peminjaman wadah makan terpusat yang dikelola koperasi sekolah dengan petugas pencuci khusus.`,
+                        `C. Membebaskan pedagang tetap memakai plastik sekali pakai tanpa batas waktu.`,
+                        `D. Memberlakukan denda tinggi bagi siswa yang lupa membawa wadah makan dari rumah.`
+                    ],
+                    correctIndex: 1
+                },
+                sampleBahas: `<strong>Kunci Jawaban: B</strong><br><strong>Pembahasan & Analisis SOLO (Extended Abstract):</strong><br>Pilihan B merupakan jawaban terbaik karena tidak sekadar memihak satu argumen, melainkan mengintegrasikan tujuan pengurangan sampah plastik (pihak pro) dengan solusi atas kendala waktu pencucian wadah (pihak kontra). Opsi A, C, dan D hanya mengorbankan salah satu pihak.`,
+                fullKisi: `
+                    <h4 class="font-bold text-indigo-950 text-base mb-2">Kisi-Kisi Lengkap Penilaian Akhir Bahasa Indonesia Kelas IX</h4>
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-indigo-50 text-indigo-900 border-y border-indigo-200">
+                                <th class="p-2.5">No</th>
+                                <th class="p-2.5">Materi Pokok</th>
+                                <th class="p-2.5">Indikator Soal</th>
+                                <th class="p-2.5">Level</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200">
+                            <tr><td class="p-2.5 font-bold">1</td><td class="p-2.5">Teks Diskusi</td><td class="p-2.5">Mengevaluasi kekuatan argumen pro-kontra dan menyusun solusi sintesis.</td><td class="p-2.5 font-semibold text-purple-700">L3 (HOTS)</td></tr>
+                            <tr><td class="p-2.5 font-bold">2</td><td class="p-2.5">Artikel Ilmiah Populer</td><td class="p-2.5">Membedakan fakta empiris dan opini penulis dalam artikel kesehatan remaja.</td><td class="p-2.5 font-semibold text-blue-700">L2</td></tr>
+                            <tr><td class="p-2.5 font-bold">3</td><td class="p-2.5">Teks Cerita Inspiratif</td><td class="p-2.5">Merefleksikan nilai empati tokoh terhadap penyelesaian konflik sosial di sekolah.</td><td class="p-2.5 font-semibold text-emerald-700">L3 (HOTS)</td></tr>
+                            <tr><td class="p-2.5 font-bold">4</td><td class="p-2.5">Pidato Persuasif</td><td class="p-2.5">Melengkapi bagian ajakan pidato dengan kalimat persuasif yang santun dan efektif.</td><td class="p-2.5 font-semibold text-purple-700">L3 (HOTS)</td></tr>
+                        </tbody>
+                    </table>`,
+                fullSoal: `
+                    <div class="space-y-4 text-xs sm:text-sm">
+                        <div class="p-4 rounded-xl bg-white border border-slate-200 shadow-sm space-y-2">
+                            <span class="text-[11px] font-bold text-indigo-600 uppercase">Soal 1 &bull; Teks Diskusi</span>
+                            <p class="italic bg-slate-50 p-3 rounded-lg border-l-4 border-indigo-500">"Kebijakan pembatasan kemasan plastik sekali pakai di kantin SMP Merdeka menuai beragam tanggapan. Sebagian pihak menilai langkah ini efektif menekan limbah harian hingga 60%, sedangkan pihak lain mengkhawatirkan kerepotan pencucian wadah saat jam istirahat."</p>
+                            <p class="font-bold">1. Manakah solusi sintesis yang paling tepat untuk menjembatani kedua argumen tersebut?</p>
+                            <ul class="space-y-1 pl-3">
+                                <li>A. Menghentikan operasional kantin selama masa transisi.</li>
+                                <li class="font-semibold text-indigo-700">B. Menerapkan sistem peminjaman wadah makan terpusat yang dikelola koperasi sekolah dengan petugas pencuci khusus.</li>
+                                <li>C. Membebaskan pedagang tetap memakai plastik sekali pakai.</li>
+                                <li>D. Memberlakukan denda tinggi bagi siswa yang tidak membawa bekal.</li>
+                            </ul>
+                        </div>
+                        <div class="p-4 rounded-xl bg-white border border-slate-200 shadow-sm space-y-2">
+                            <span class="text-[11px] font-bold text-indigo-600 uppercase">Soal 2 &bull; Artikel Ilmiah Populer</span>
+                            <p class="italic bg-slate-50 p-3 rounded-lg border-l-4 border-indigo-500">"Kebiasaan membaca memindai (skimming) di layar gawai membuat pembaca remaja lebih cepat menemukan kata kunci, tetapi menurunkan daya tahan konsentrasi saat harus memahami teks panjang yang membutuhkan perenungan mendalam."</p>
+                            <p class="font-bold">2. Simpulan reflektif apa yang paling tepat diterapkan siswa kelas IX berdasarkan kutipan tersebut?</p>
+                            <ul class="space-y-1 pl-3">
+                                <li>A. Menghindari penggunaan gawai sama sekali dalam kegiatan belajar.</li>
+                                <li>B. Hanya membaca ringkasan singkat di media sosial.</li>
+                                <li class="font-semibold text-indigo-700">C. Mengombinasikan teknik baca cepat untuk pencarian data awal dan membaca intensif dengan catatan kritis untuk memahami materi esensial.</li>
+                                <li>D. Mengganti seluruh buku cetak di perpustakaan menjadi infografik pendek.</li>
+                            </ul>
+                        </div>
+                    </div>`,
+                fullBahas: `
+                    <div class="space-y-3 text-xs sm:text-sm">
+                        <div class="p-4 rounded-xl bg-emerald-50/70 border border-emerald-200 space-y-1.5">
+                            <h5 class="font-bold text-emerald-900">Pembahasan Soal 1 (Kunci: B)</h5>
+                            <p class="text-slate-700">Jawaban B menggabungkan kepedulian ekologis dengan solusi manajemen waktu kantin. Sesuai rubrik Taksonomi SOLO level <em>Extended Abstract</em>.</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-emerald-50/70 border border-emerald-200 space-y-1.5">
+                            <h5 class="font-bold text-emerald-900">Pembahasan Soal 2 (Kunci: C)</h5>
+                            <p class="text-slate-700">Jawaban C menunjukkan kemampuan metakognitif siswa dalam menempatkan teknik membaca sesuai kebutuhan informasi.</p>
+                        </div>
+                    </div>`
+            },
+            {
+                id: 'pkg-viii-1',
+                title: 'Paket Kupas Tuntas ANBK Literasi & Teks Ulasan Kelas VIII',
+                grade: 'Kelas VIII',
+                price: 40000,
+                questionCount: '35 Butir Soal AKM',
+                desc: 'Fokus persiapan Asesmen Nasional (ANBK) Kelas VIII: Teks Eksplanasi, Iklan/Slogan/Poster, Teks Ulasan Karya, dan Puisi.',
+                sampleKisi: `<strong>Elemen Membaca & Memirsa (Kelas VIII):</strong><br>• <strong>Materi:</strong> Teks Ulasan Buku Fiksi & Nonfiksi.<br>• <strong>Indikator Soal:</strong> Disajikan kutipan ulasan buku yang memuat kelebihan dan kekurangan karya, peserta didik dapat menilai kelayakan buku bagi pembaca remaja secara objektif.`,
+                sampleSoal: {
+                    stimulus: `"Novel 'Jejak Langkah di Bukit Kapur' menyajikan alur petualangan persahabatan yang sangat memikat dan sarat pesan pelestarian alam. Sayangnya, penggunaan istilah geologi yang cukup padat di beberapa bab awal tanpa catatan kaki membuat pembaca seusia SMP harus membuka kamus berulang kali."`,
+                    question: `Pernyataan manakah yang paling tepat mewakili evaluasi objektif pengulas terhadap novel tersebut?`,
+                    options: [
+                        `A. Novel tersebut tidak layak dibaca oleh siswa SMP karena bahasanya terlalu rumit.`,
+                        `B. Kekurangan pada aspek teknis peristilahan tidak menghapus keunggulan tema dan alur cerita, namun penambahan glosarium pada cetakan berikutnya sangat disarankan.`,
+                        `C. Penulis gagal menyampaikan pesan pelestarian alam karena terlalu banyak istilah geologi.`,
+                        `D. Novel tersebut hanya cocok dibaca oleh mahasiswa jurusan geologi.`
+                    ],
+                    correctIndex: 1
+                },
+                sampleBahas: `<strong>Kunci Jawaban: B</strong><br><strong>Pembahasan:</strong><br>Dalam teks ulasan yang baik, evaluasi bersifat berimbang (menimbang keunggulan sekaligus memberi saran konstruktif atas kekurangan teknis seperti penambahan glosarium/catatan kaki).`,
+                fullKisi: `<p class="text-sm font-semibold text-indigo-900">Kisi-Kisi Lengkap Kelas VIII: Mencakup 35 indikator Teks Berita, Iklan/Poster, Eksplanasi, Ulasan, dan Drama.</p>`,
+                fullSoal: `<p class="text-sm">Seluruh 35 butir soal AKM Literasi Kelas VIII terbuka di halaman ini setelah aktivasi pembayaran.</p>`,
+                fullBahas: `<p class="text-sm">Pembahasan lengkap 35 butir soal beserta rubrik penskoran AKM Kelas VIII.</p>`
+            },
+            {
+                id: 'pkg-vii-1',
+                title: 'Paket Modul Dasar & Soal HOTS Bahasa Indonesia Kelas VII',
+                grade: 'Kelas VII',
+                price: 35000,
+                questionCount: '30 Butir Soal + Rubrik',
+                desc: 'Materi Teks Deskripsi, Cerita Fantasi, Teks Prosedur, dan Surat Pribadi/Dinas dengan stimulus visual dan wacana kontekstual.',
+                sampleKisi: `<strong>Elemen Membaca & Memirsa (Kelas VII):</strong><br>• <strong>Materi:</strong> Teks Prosedur Kompleks.<br>• <strong>Indikator Soal:</strong> Disajikan urutan langkah pembuatan kompos organik yang bagian takarannya rumpang, peserta didik dapat memprediksi dampak jika langkah tersebut dilewati.`,
+                sampleSoal: {
+                    stimulus: `"Dalam prosedur pembuatan pupuk kompos daun kering, larutan aktivator EM4 harus dicampurkan secara merata sebelum wadah ditutup rapat selama 14 hari agar bakteri pengurai bekerja optimal."`,
+                    question: `Apa dampak yang paling mungkin terjadi apabila pelaksana prosedur langsung menutup rapat wadah tanpa mencampurkan larutan aktivator?`,
+                    options: [
+                        `A. Daun kering akan langsung berubah menjadi kompos dalam waktu 2 hari.`,
+                        `B. Proses fermentasi dan penguraian bahan organik berjalan sangat lambat sehingga kompos tidak matang tepat waktu.`,
+                        `C. Wadah kompos akan menghasilkan bunga tanaman baru secara otomatis.`,
+                        `D. Warna daun kering akan berubah menjadi putih bersih.`
+                    ],
+                    correctIndex: 1
+                },
+                sampleBahas: `<strong>Kunci Jawaban: B</strong><br><strong>Pembahasan:</strong><br>Larutan aktivator berfungsi mempercepat kerja mikroorganisme pengurai. Tanpa aktivator, proses dekomposisi alami memakan waktu jauh lebih lama dari 14 hari.`,
+                fullKisi: `<p class="text-sm font-semibold text-indigo-900">Kisi-Kisi Lengkap Kelas VII: Teks Deskripsi, Cerita Imajinasi, Teks Prosedur, dan Laporan Hasil Observasi.</p>`,
+                fullSoal: `<p class="text-sm">Seluruh 30 butir soal latihan Kelas VII beserta stimulus wacana bergambar.</p>`,
+                fullBahas: `<p class="text-sm">Kunci jawaban dan panduan penilaian lengkap Kelas VII.</p>`
+            }
+        ];
+
+        // Memuat data dari localStorage atau gunakan default
+        function getBankSettings() {
+            const saved = localStorage.getItem('lb_bank_settings');
+            return saved ? JSON.parse(saved) : defaultBankSettings;
+        }
+
+        function getPackages() {
+            const saved = localStorage.getItem('lb_packages');
+            return saved ? JSON.parse(saved) : defaultPackages;
+        }
+
+        let currentFilter = 'ALL';
+        let activeSamplePkgIndex = 0;
+        let selectedPackageForPurchase = null;
+
+        // 3. FUNGSI NOTIFIKASI TOAST
+        function showToast(message) {
+            const toast = document.getElementById('toastBox');
+            document.getElementById('toastMessage').innerText = message;
+            toast.classList.remove('hidden');
+            clearTimeout(window.toastTimer);
+            window.toastTimer = setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3800);
+        }
+
+        // Format Rupiah
+        function formatRupiah(num) {
+            return 'Rp ' + Number(num).toLocaleString('id-ID');
+        }
+
+        // 4. RENDER KATALOG PAKET DI HALAMAN TOKO
+        function renderCatalog() {
+            const packages = getPackages();
+            const grid = document.getElementById('packagesGrid');
+            grid.innerHTML = '';
+
+            const unlockedMap = JSON.parse(localStorage.getItem('lb_unlocked_packages') || '{}');
+
+            packages.forEach((pkg, index) => {
+                if (currentFilter !== 'ALL' && pkg.grade !== currentFilter) return;
+
+                const isUnlockedOnThisDevice = unlockedMap[pkg.id] && unlockedMap[pkg.id].deviceId === currentDeviceId;
+
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl transition-all flex flex-col justify-between overflow-hidden group';
+                card.innerHTML = `
+                    <div>
+                        <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/70">
+                            <span class="text-xs font-extrabold px-3 py-1 rounded-full bg-indigo-100 text-indigo-800">${pkg.grade}</span>
+                            <span class="text-xs font-semibold text-slate-500"><i class="fa-regular fa-file-lines mr-1"></i>${pkg.questionCount || 'Paket Lengkap'}</span>
+                        </div>
+                        <div class="p-5 space-y-3">
+                            <h3 class="font-extrabold text-base text-slate-900 group-hover:text-indigo-600 transition leading-snug">${pkg.title}</h3>
+                            <p class="text-xs text-slate-500 leading-relaxed">${pkg.desc}</p>
+                            <div class="pt-2 flex flex-wrap gap-1.5 text-[11px] text-slate-600">
+                                <span class="bg-slate-100 px-2.5 py-1 rounded-md font-medium"><i class="fa-solid fa-check text-emerald-500 mr-1"></i>Kisi-Kisi</span>
+                                <span class="bg-slate-100 px-2.5 py-1 rounded-md font-medium"><i class="fa-solid fa-check text-emerald-500 mr-1"></i>Soal HOTS</span>
+                                <span class="bg-slate-100 px-2.5 py-1 rounded-md font-medium"><i class="fa-solid fa-check text-emerald-500 mr-1"></i>Pembahasan</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-5 pt-3 border-t border-slate-100 bg-slate-50/40 space-y-3">
+                        <div class="flex justify-between items-baseline">
+                            <span class="text-[11px] text-slate-400 font-medium">Investasi Belajar:</span>
+                            <span class="text-lg font-extrabold text-indigo-700">${formatRupiah(pkg.price)}</span>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="openSampleModal(${index})" class="py-2.5 px-3 rounded-xl border border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-900 font-bold text-xs transition flex items-center justify-center gap-1.5">
+                                <i class="fa-regular fa-eye"></i> Coba Contoh
+                            </button>
+                            ${
+                                isUnlockedOnThisDevice
+                                ? `<button onclick="openProtectedReader('${pkg.id}')" class="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition flex items-center justify-center gap-1.5 shadow">
+                                       <i class="fa-solid fa-book-open"></i> Buka Materi
+                                   </button>`
+                                : `<button onclick="openPaymentModal('${pkg.id}')" class="py-2.5 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs transition flex items-center justify-center gap-1.5 shadow">
+                                       <i class="fa-solid fa-cart-shopping"></i> Beli Paket
+                                   </button>`
+                            }
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterPackages(grade) {
+            currentFilter = grade;
+            ['ALL', 'Kelas VII', 'Kelas VIII', 'Kelas IX'].forEach(g => {
+                const btn = document.getElementById('filter-' + g);
+                if (g === grade) {
+                    btn.className = 'px-3 py-1.5 rounded-lg bg-white text-indigo-700 shadow-sm transition';
+                } else {
+                    btn.className = 'px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition';
+                }
+            });
+            renderCatalog();
+        }
+
+        // 5. FITUR COBA CONTOH KISI-KISI, SOAL & PEMBAHASAN (FREE PREVIEW)
+        function openSampleModal(pkgIndex) {
+            const packages = getPackages();
+            activeSamplePkgIndex = Number(pkgIndex) || 0;
+            const pkg = packages[activeSamplePkgIndex];
+            if (!pkg) return;
+
+            // Isi dropdown pemilih paket di modal
+            const selector = document.getElementById('samplePackageSelector');
+            selector.innerHTML = packages.map((p, idx) => `<option value="${idx}" ${idx === activeSamplePkgIndex ? 'selected' : ''}>${p.grade} - ${p.title}</option>`).join('');
+
+            document.getElementById('sampleModalTitle').innerText = `Contoh Gratis: ${pkg.title}`;
+
+            // Render Tab 1: Contoh Kisi-Kisi
+            document.getElementById('sContent-kisi').innerHTML = `
+                <div class="bg-amber-50/70 border border-amber-200 rounded-xl p-4 space-y-2">
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-amber-800 bg-amber-200/70 px-2.5 py-0.5 rounded">Cuplikan Kisi-Kisi Resmi</span>
+                    <div class="text-slate-700 leading-relaxed pt-1">${pkg.sampleKisi}</div>
+                </div>
+                <p class="text-xs text-slate-500 italic"><i class="fa-solid fa-circle-info mr-1"></i>Pada paket lengkap, Anda akan mendapatkan daftar kisi-kisi utuh untuk seluruh indikator soal.</p>
+            `;
+
+            // Render Tab 2: Contoh Soal Interaktif (Bisa diklik jawabannya)
+            if (typeof pkg.sampleSoal === 'object') {
+                const optionsHtml = pkg.sampleSoal.options.map((opt, i) => `
+                    <button onclick="checkSampleAnswer(${i}, ${pkg.sampleSoal.correctIndex})" id="sampleOpt-${i}" class="w-full text-left p-3 rounded-xl border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50/40 transition text-xs sm:text-sm font-medium flex items-start gap-2">
+                        <span>${opt}</span>
+                    </button>
+                `).join('');
+
+                document.getElementById('sContent-soal').innerHTML = `
+                    <div class="space-y-3">
+                        <div class="p-3.5 rounded-xl bg-indigo-50/70 border-l-4 border-indigo-500 italic text-slate-700 text-xs sm:text-sm">
+                            ${pkg.sampleSoal.stimulus}
+                        </div>
+                        <p class="font-bold text-slate-900">${pkg.sampleSoal.question}</p>
+                        <p class="text-[11px] text-amber-700 font-semibold"><i class="fa-regular fa-hand-pointer mr-1"></i>Silakan klik salah satu pilihan jawaban di bawah ini untuk menguji interaktivitas soal:</p>
+                        <div class="space-y-2">${optionsHtml}</div>
+                        <div id="sampleAnswerFeedback" class="hidden p-3.5 rounded-xl text-xs"></div>
+                    </div>
+                `;
+            } else {
+                document.getElementById('sContent-soal').innerHTML = `
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 leading-relaxed">${pkg.sampleSoal}</div>
+                `;
+            }
+
+            // Render Tab 3: Contoh Pembahasan
+            document.getElementById('sContent-bahas').innerHTML = `
+                <div class="bg-emerald-50/70 border border-emerald-200 rounded-xl p-4 space-y-2">
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-200/70 px-2.5 py-0.5 rounded">Cuplikan Pembahasan & Analisis Jawaban</span>
+                    <div class="text-slate-700 leading-relaxed pt-1">${pkg.sampleBahas}</div>
+                </div>
+            `;
+
+            // Tombol Beli di bagian bawah modal contoh
+            const buyBtn = document.getElementById('sampleBuyBtn');
+            buyBtn.onclick = function() {
+                closeSampleModal();
+                openPaymentModal(pkg.id);
+            };
+
+            switchSampleTab('kisi');
+            document.getElementById('sampleModal').classList.remove('hidden');
+        }
+
+        function checkSampleAnswer(selectedIndex, correctIndex) {
+            const feedback = document.getElementById('sampleAnswerFeedback');
+            feedback.classList.remove('hidden');
+            if (selectedIndex === correctIndex) {
+                feedback.className = 'p-3.5 rounded-xl text-xs bg-emerald-100 text-emerald-900 border border-emerald-300 font-semibold';
+                feedback.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i> <strong>Jawaban Anda Tepat!</strong> Silakan buka tab <strong>"3. Contoh Pembahasan"</strong> di atas untuk melihat analisis lengkapnya.`;
+            } else {
+                feedback.className = 'p-3.5 rounded-xl text-xs bg-rose-100 text-rose-900 border border-rose-300 font-semibold';
+                feedback.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-600 mr-1"></i> <strong>Kurang Tepat.</strong> Coba pilih opsi lain atau buka tab <strong>"3. Contoh Pembahasan"</strong> untuk melihat kunci analisisnya.`;
+            }
+        }
+
+        function switchSampleTab(tab) {
+            ['kisi', 'soal', 'bahas'].forEach(t => {
+                document.getElementById('sContent-' + t).classList.add('hidden');
+                const btn = document.getElementById('sTab-' + t);
+                btn.className = 'flex-1 py-3 border-b-2 border-transparent text-slate-600 hover:text-slate-900';
+            });
+            document.getElementById('sContent-' + tab).classList.remove('hidden');
+            document.getElementById('sTab-' + tab).className = 'flex-1 py-3 border-b-2 border-amber-600 text-amber-700 bg-white font-extrabold';
+        }
+
+        function closeSampleModal() {
+            document.getElementById('sampleModal').classList.add('hidden');
+        }
+
+        // 6. MODAL PEMBAYARAN REKENING & VERIFIKASI LISENSI PERANGKAT
+        function openPaymentModal(pkgId) {
+            const packages = getPackages();
+            const pkg = packages.find(p => p.id === pkgId);
+            if (!pkg) return;
+
+            selectedPackageForPurchase = pkg;
+            const bank = getBankSettings();
+
+            document.getElementById('payModalPkgTitle').innerText = pkg.title;
+            document.getElementById('payModalPrice').innerText = formatRupiah(pkg.price);
+            document.getElementById('payBankName').innerText = bank.bankName;
+            document.getElementById('payBankNumber').innerText = bank.bankNumber;
+            document.getElementById('payBankHolder').innerText = 'a.n. ' + bank.bankHolder;
+            document.getElementById('payWaNumber').innerText = bank.waNumber;
+            document.getElementById('buyerCodeInput').value = '';
+
+            document.getElementById('paymentModal').classList.remove('hidden');
+        }
+
+        function closePaymentModal() {
+            document.getElementById('paymentModal').classList.add('hidden');
+        }
+
+        function copyBankNumber() {
+            const bank = getBankSettings();
+            const tempInput = document.createElement('input');
+            tempInput.value = bank.bankNumber;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            showToast('Nomor rekening ' + bank.bankNumber + ' berhasil disalin!');
+        }
+
+        function fillDemoCodeInModal() {
+            const bank = getBankSettings();
+            document.getElementById('buyerCodeInput').value = bank.licenseCode;
+            showToast('Simulasi transfer berhasil! Kode aktivasi (' + bank.licenseCode + ') telah diisi.');
+        }
+
+        function verifyAndUnlockPackage() {
+            if (!selectedPackageForPurchase) return;
+            const email = document.getElementById('buyerEmailInput').value.trim();
+            const inputCode = document.getElementById('buyerCodeInput').value.trim().toUpperCase();
+            const bank = getBankSettings();
+
+            if (!email) {
+                showToast('Mohon isi nama atau email pembeli untuk identitas lisensi dokumen.');
+                return;
+            }
+            if (inputCode !== bank.licenseCode.toUpperCase()) {
+                showToast('Kode aktivasi belum sesuai. Klik "Simulasi Sudah Transfer" untuk mencoba.');
+                return;
+            }
+
+            // Simpan lisensi terikat ke ID Perangkat saat ini
+            const unlockedMap = JSON.parse(localStorage.getItem('lb_unlocked_packages') || '{}');
+            unlockedMap[selectedPackageForPurchase.id] = {
+                deviceId: currentDeviceId,
+                buyerEmail: email,
+                unlockedAt: new Date().toISOString()
+            };
+            localStorage.setItem('lb_unlocked_packages', JSON.stringify(unlockedMap));
+
+            closePaymentModal();
+            renderCatalog();
+            openProtectedReader(selectedPackageForPurchase.id);
+            showToast('Pembayaran diverifikasi! Paket dikunci khusus pada perangkat ' + currentDeviceId);
+        }
+
+        // 7. PEMBACA DOKUMEN AMAN (DRM SECURE READER)
+        function openProtectedReader(pkgId) {
+            const unlockedMap = JSON.parse(localStorage.getItem('lb_unlocked_packages') || '{}');
+            const license = unlockedMap[pkgId];
+
+            if (!license) {
+                showToast('Silakan selesaikan pembayaran terlebih dahulu untuk membuka paket ini.');
+                return;
+            }
+            if (license.deviceId !== currentDeviceId) {
+                showToast('Akses Ditolak! Paket ini hanya dapat dibuka pada perangkat pengunduh awal (' + license.deviceId + ').');
+                return;
+            }
+
+            const pkg = getPackages().find(p => p.id === pkgId);
+            if (!pkg) return;
+
+            document.getElementById('readerGradeBadge').innerText = pkg.grade;
+            document.getElementById('readerTitle').innerText = pkg.title;
+            document.getElementById('readerDeviceId').innerText = license.deviceId;
+            document.getElementById('readerBuyerEmail').innerText = license.buyerEmail;
+
+            const wmString = `LISENSI TUNGGAL: ${license.buyerEmail.toUpperCase()} • PERANGKAT: ${license.deviceId}`;
+            document.getElementById('wmText1').innerText = wmString;
+            document.getElementById('wmText2').innerText = wmString;
+            document.getElementById('wmText3').innerText = wmString;
+
+            document.getElementById('rContent-kisi').innerHTML = pkg.fullKisi;
+            document.getElementById('rContent-soal').innerHTML = pkg.fullSoal;
+            document.getElementById('rContent-bahas').innerHTML = pkg.fullBahas;
+
+            switchReaderTab('kisi');
+            switchMainView('reader');
+        }
+
+        function switchReaderTab(tab) {
+            ['kisi', 'soal', 'bahas'].forEach(t => {
+                document.getElementById('rContent-' + t).classList.add('hidden');
+                const btn = document.getElementById('rTab-' + t);
+                btn.className = 'px-5 py-3.5 border-b-2 border-transparent text-slate-600 hover:text-slate-900 transition flex items-center gap-2';
+            });
+            document.getElementById('rContent-' + tab).classList.remove('hidden');
+            document.getElementById('rTab-' + tab).className = 'px-5 py-3.5 border-b-2 border-indigo-600 text-indigo-700 bg-white transition flex items-center gap-2 font-extrabold';
+        }
+
+        function simulateDifferentDevice() {
+            showToast('Simulasi dibuka di perangkat lain (SMP-ASING99): AKSES DITOLAK! File terkunci di perangkat ' + currentDeviceId);
+        }
+
+        // 8. FUNGSI AREA ADMIN (ATUR REKENING & UNGGAH PAKET BARU)
+        function loadAdminPanel() {
+            const bank = getBankSettings();
+            document.getElementById('adminBankName').value = bank.bankName;
+            document.getElementById('adminBankNumber').value = bank.bankNumber;
+            document.getElementById('adminBankHolder').value = bank.bankHolder;
+            document.getElementById('adminWaNumber').value = bank.waNumber;
+            document.getElementById('adminLicenseCode').value = bank.licenseCode;
+
+            renderAdminPackageList();
+        }
+
+        function saveBankSettings() {
+            const newSettings = {
+                bankName: document.getElementById('adminBankName').value.trim() || 'Bank Transfer',
+                bankNumber: document.getElementById('adminBankNumber').value.trim() || '-',
+                bankHolder: document.getElementById('adminBankHolder').value.trim() || 'Admin Guru',
+                waNumber: document.getElementById('adminWaNumber').value.trim() || '-',
+                licenseCode: (document.getElementById('adminLicenseCode').value.trim() || 'LUNAS2026').toUpperCase()
+            };
+            localStorage.setItem('lb_bank_settings', JSON.stringify(newSettings));
+            showToast('Pengaturan nomor rekening & kode aktivasi berhasil diperbarui!');
+        }
+
+        function renderAdminPackageList() {
+            const packages = getPackages();
+            const list = document.getElementById('adminPackageList');
+            list.innerHTML = packages.map((p, index) => `
+                <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 flex justify-between items-center gap-2 text-xs">
+                    <div>
+                        <span class="font-bold text-indigo-700">[${p.grade}]</span>
+                        <span class="font-semibold text-slate-800 ml-1">${p.title}</span>
+                        <span class="block text-slate-500 text-[11px]">${formatRupiah(p.price)}</span>
+                    </div>
+                    <button onclick="deletePackage(${index})" class="text-rose-600 hover:bg-rose-50 px-2.5 py-1 rounded-lg font-bold transition">
+                        Hapus
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function deletePackage(index) {
+            const packages = getPackages();
+            if (packages.length <= 1) {
+                showToast('Minimal harus ada 1 paket soal di dalam katalog.');
+                return;
+            }
+            packages.splice(index, 1);
+            localStorage.setItem('lb_packages', JSON.stringify(packages));
+            renderAdminPackageList();
+            renderCatalog();
+            showToast('Paket berhasil dihapus dari katalog.');
+        }
+
+        // Membaca file dokumen yang diunggah Admin (.txt / .html) ke dalam kolom soal
+        function handleAdminFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('newPkgFullSoal').value = e.target.result;
+                showToast('Isi file "' + file.name + '" berhasil dimuat ke kolom Materi Soal!');
+            };
+            reader.readAsText(file);
+        }
+
+        function fillSampleUploadForm() {
+            document.getElementById('newPkgTitle').value = 'Paket Intensif Teks Eksposisi & Pidato Persuasif';
+            document.getElementById('newPkgGrade').value = 'Kelas IX';
+            document.getElementById('newPkgPrice').value = '42000';
+            document.getElementById('newPkgDesc').value = 'Berisi 35 soal latihan HOTS analisis struktur argumen, kebahasaan, dan penyusunan pidato persuasif.';
+            document.getElementById('newPkgSampleKisi').value = 'Disajikan kutipan pidato persuasif bertema literasi digital, peserta didik dapat menentukan kalimat ajakan yang paling efektif.';
+            document.getElementById('newPkgSampleSoal').value = '"Mari kita jadikan gawai sebagai jendela ilmu, bukan sekadar layar hiburan yang menyita waktu belajar..." Kalimat penutup pidato yang searah dengan kutipan tersebut adalah...';
+            document.getElementById('newPkgSampleBahas').value = 'Kalimat ajakan yang efektif harus selaras dengan tesis pidato dan menggunakan kata ganti inklusif seperti "mari kita".';
+            document.getElementById('newPkgFullKisi').value = '<p class="text-sm">Daftar lengkap 35 indikator kisi-kisi Teks Eksposisi dan Pidato Persuasif SMP.</p>';
+            document.getElementById('newPkgFullSoal').value = '<p class="text-sm">1. Bacalah kutipan pidato berikut dengan saksama... (35 Butir Soal Lengkap).</p>';
+            document.getElementById('newPkgFullBahas').value = '<p class="text-sm">Kunci Jawaban dan Rubrik Penskoran Lengkap 35 Nomor.</p>';
+            showToast('Formulir contoh paket baru berhasil diisi! Klik "Terbitkan Paket" di bawah.');
+        }
+
+        function addNewPackage() {
+            const title = document.getElementById('newPkgTitle').value.trim();
+            const grade = document.getElementById('newPkgGrade').value;
+            const price = Number(document.getElementById('newPkgPrice').value) || 35000;
+            const desc = document.getElementById('newPkgDesc').value.trim() || 'Paket Kisi-kisi, Soal Latihan & Pembahasan Bahasa Indonesia SMP.';
+            const sKisi = document.getElementById('newPkgSampleKisi').value.trim() || 'Contoh indikator kisi-kisi tersedia.';
+            const sSoal = document.getElementById('newPkgSampleSoal').value.trim() || 'Contoh soal latihan tersedia.';
+            const sBahas = document.getElementById('newPkgSampleBahas').value.trim() || 'Contoh pembahasan soal tersedia.';
+            const fKisi = document.getElementById('newPkgFullKisi').value.trim() || sKisi;
+            const fSoal = document.getElementById('newPkgFullSoal').value.trim() || sSoal;
+            const fBahas = document.getElementById('newPkgFullBahas').value.trim() || sBahas;
+
+            if (!title) {
+                showToast('Mohon isi Judul Paket Soal terlebih dahulu.');
+                return;
+            }
+
+            const packages = getPackages();
+            const newPkg = {
+                id: 'pkg-' + Date.now(),
+                title: title,
+                grade: grade,
+                price: price,
+                questionCount: 'Paket Baru',
+                desc: desc,
+                sampleKisi: sKisi,
+                sampleSoal: sSoal,
+                sampleBahas: sBahas,
+                fullKisi: `<div class="p-4 bg-white rounded-xl border border-slate-200 text-sm leading-relaxed">${fKisi}</div>`,
+                fullSoal: `<div class="p-4 bg-white rounded-xl border border-slate-200 text-sm leading-relaxed">${fSoal}</div>`,
+                fullBahas: `<div class="p-4 bg-emerald-50 rounded-xl border border-emerald-200 text-sm leading-relaxed">${fBahas}</div>`
+            };
+
+            packages.unshift(newPkg);
+            localStorage.setItem('lb_packages', JSON.stringify(packages));
+
+            renderAdminPackageList();
+            renderCatalog();
+            showToast('Paket "' + title + '" berhasil diterbitkan ke halaman katalog!');
+            switchMainView('store');
+        }
+
+        // 9. NAVIGASI ANTAR TAMPILAN (TOKO, PEMBACA DRM, ADMIN)
+        function switchMainView(view) {
+            document.getElementById('viewStore').classList.add('hidden');
+            document.getElementById('viewReader').classList.add('hidden');
+            document.getElementById('viewAdmin').classList.add('hidden');
+
+            document.getElementById('navBtnStore').className = 'px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition flex items-center gap-1.5';
+            document.getElementById('navBtnAdmin').className = 'px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 border border-slate-200 transition flex items-center gap-1.5';
+
+            if (view === 'store') {
+                document.getElementById('viewStore').classList.remove('hidden');
+                document.getElementById('navBtnStore').className = 'px-3.5 py-2 rounded-xl text-xs font-bold bg-indigo-50 text-indigo-700 transition flex items-center gap-1.5';
+                renderCatalog();
+            } else if (view === 'reader') {
+                document.getElementById('viewReader').classList.remove('hidden');
+            } else if (view === 'admin') {
+                loadAdminPanel();
+                document.getElementById('viewAdmin').classList.remove('hidden');
+                document.getElementById('navBtnAdmin').className = 'px-3.5 py-2 rounded-xl text-xs font-bold bg-indigo-600 text-white transition flex items-center gap-1.5 shadow-sm';
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 10. PROTEKSI ANTI-KLIK KANAN, ANTI-SALIN & ANTI-SCREENSHOT PADA READER
+        document.addEventListener('contextmenu', function(e) {
+            if (!document.getElementById('viewReader').classList.contains('hidden')) {
+                e.preventDefault();
+                showToast('Klik kanan dinonaktifkan pada area dokumen untuk melindungi hak cipta.');
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (
+                (e.ctrlKey && ['s', 'p', 'u', 'c'].includes(e.key.toLowerCase())) ||
+                e.key === 'F12' || e.key === 'PrintScreen'
+            ) {
+                if (!document.getElementById('viewReader').classList.contains('hidden')) {
+                    e.preventDefault();
+                    blurDocument();
+                    showToast('Fungsi unduh, cetak, salin, dan tangkapan layar dinonaktifkan.');
+                }
+            }
+        });
+
+        function blurDocument() {
+            const readerView = document.getElementById('viewReader');
+            if (!readerView.classList.contains('hidden')) {
+                document.getElementById('documentContainer').classList.add('blur-protection');
+                document.getElementById('blurWarning').classList.remove('hidden');
+            }
+        }
+
+        function unblurDocument() {
+            document.getElementById('documentContainer').classList.remove('blur-protection');
+            document.getElementById('blurWarning').classList.add('hidden');
+        }
+
+        window.addEventListener('blur', blurDocument);
+
+        // Jalankan saat halaman pertama kali dimuat
+        window.onload = function() {
+            renderCatalog();
+        };
+    </script>
+</body>
+</html>
